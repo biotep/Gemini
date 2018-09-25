@@ -56,15 +56,15 @@ class Gemini:
 
         self.tickerColumn1 = Div(text="Company Name", width=120)
         self.tickerColumn2 = Div(text="Industry", width=120)
-        self.tickerInfo1 = Div(text=company_name1, width=200)
-        self.tickerInfo2 = Div(text=industry1, width=200)
-        self.tickerInfo3 = Div(text='Market cap: ' + marketcap1, width=200)
-        self.tickerInfo4 = Div(text='EBIDTA: ' + ebidta1, width=200)
+        self.tickerInfo1 = Div(text='<b>'+company_name1+'</b>', width=300)
+        self.tickerInfo2 = Div(text=industry1, width=300)
+        self.tickerInfo3 = Div(text='Market cap: ' + marketcap1, width=300)
+        self.tickerInfo4 = Div(text='EBIDTA: ' + ebidta1, width=300)
 
-        self.tickerInfo5 = Div(text=company_name2, width=200)
-        self.tickerInfo6 = Div(text=industry2, width=200)
-        self.tickerInfo7 = Div(text='Market cap: ' + marketcap2, width=200)
-        self.tickerInfo8 = Div(text='EBIDTA: ' + ebidta2, width=200)
+        self.tickerInfo5 = Div(text='<b>'+company_name2+'</b>', width=300)
+        self.tickerInfo6 = Div(text=industry2, width=300)
+        self.tickerInfo7 = Div(text='Market cap: ' + marketcap2, width=300)
+        self.tickerInfo8 = Div(text='EBIDTA: ' + ebidta2, width=300)
 
         #return '<b>'+company_name+'</b>', industry, marketcap, ebidta
 
@@ -80,8 +80,8 @@ class Gemini:
         self.ticker2.on_change('value', self.ticker2_change)
         self.data = self.get_data(self.ticker1.value, self.ticker2.value)
 
-        self.text2 = Div(text="stock information:", width = 400)
-        self.text3 = Div(text='---------------------------------------------------------', width = 400)
+        self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
+
         text4 = Div(text='COMPANY INDUSTRY MARKETCAP EBIDTA', width=400)
 
         #changing the columndatasource on the main screen to hold only stock information
@@ -99,7 +99,7 @@ class Gemini:
         self.tickerdownloadbutton.on_click(self.tickerdownloadbutton_handler)
 
         self.widgets = column(
-            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2), column(column(self.text2, self.text3), row(self.tickerInfo1, self.tickerInfo2),  row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),  row(self.tickerInfo7, self.tickerInfo8)),
+            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2), column(column(self.text2), row(self.tickerInfo1, self.tickerInfo2),  row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),  row(self.tickerInfo7, self.tickerInfo8)),
                 column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))
         main_row = row(self.widgets)
         layout = column(main_row)
@@ -280,7 +280,7 @@ class Gemini:
         self.tickerInfoTextSetup()
         self.widgets = column(
             row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2),
-                column(column(self.text2, self.text3), row(self.tickerInfo1, self.tickerInfo2),
+                column(column(self.text2), row(self.tickerInfo1, self.tickerInfo2),
                        row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),
                        row(self.tickerInfo7, self.tickerInfo8)),
                 column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))

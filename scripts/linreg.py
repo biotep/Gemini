@@ -10,8 +10,8 @@ class Linreg:
         self.t1 = data.keys()[0]
         self.t2 = data.keys()[2]
         linreg = np.polyfit(data.t1, data.t2, 1)
-        gradient = linreg[0]
-        intercept = linreg[1]
+        self.gradient = linreg[0]
+        self.intercept = linreg[1]
 
         self.tools = 'pan,wheel_zoom,xbox_select,reset'
 
@@ -19,8 +19,8 @@ class Linreg:
         self.p.scatter(x='t1', y='t2', marker='asterisk', size=5, color='Colors', alpha=0.6,  source=self.source)
         self.p.circle('t1', 't2', size=2, source=self.source, selection_color="orange", alpha=0.2,  selection_alpha=0.2)
 
-        slope = Slope(gradient=gradient, y_intercept=intercept, line_color='green', line_dash='dashed', line_width=3.5)
-        self.p.add_layout(slope)
+        self.slope = Slope(gradient=self.gradient, y_intercept=self.intercept, line_color='green', line_dash='dashed', line_width=3.5)
+        self.p.add_layout(self.slope)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
         self.stats = PreText(text='', width=500)
@@ -38,4 +38,12 @@ class Linreg:
         self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe())
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
+        #Slope update
+        linreg = np.polyfit(data.t1, data.t2, 1)
+        self.gradient = linreg[0]
+        self.intercept = linreg[1]
+        self.slope.gradient = self.gradient
+        self.slope.y_intercept = self.intercept
+        #self.slope = Slope(gradient=self.gradient, y_intercept=self.intercept, line_color='green', line_dash='dashed', line_width=3.5)
+
 

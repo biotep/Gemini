@@ -35,7 +35,7 @@ class Ratio_model:
         self.STD_slider.on_change('value', self.STD_slider_callback)
         self.update(self.data)
 
-        layout = row(column(self.MA_slider, self.STD_slider), self.p1, self.p2)
+        layout = row(column(self.p1, self.p2), column(self.MA_slider, self.STD_slider))
         self.tab = Panel(child=layout, title='Ratio Model')
 
     def MA_slider_callback(self, attr, old, new):

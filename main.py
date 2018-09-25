@@ -58,6 +58,7 @@ class Gemini:
         text2 = Div(text="stock information:", width = 300)
         text3 = Div(text='COMPANY INDUSTRY MARKETCAP EBIDTA', width = 300)
 
+        #changing the columndatasource on the main screen to hold only stock information
         self.source = ColumnDataSource(data=dict(date=[], Close=[], Norm=[], Time=[], Colors=[]))
 
         self.source.data = self.source.from_df(self.catalog.loc[self.catalog.STOCK.isin([self.ticker1.value, self.ticker2.value])])

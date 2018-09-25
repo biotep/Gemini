@@ -1,5 +1,5 @@
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Panel, Slope
+from bokeh.models import ColumnDataSource, Panel, Slope, PreText
 from bokeh.layouts import column, row
 import numpy as np
 
@@ -23,10 +23,11 @@ class Linreg:
         self.p.add_layout(slope)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
-
+        self.stats = PreText(text='', width=500)
+        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe())
         self.p.grid.grid_line_color = None
         self.p.background_fill_color = "#eedddd"
-        layout = row(self.p)
+        layout = row(self.p, self.stats)
         self.tab = Panel(child=layout, title='Linear Regression')
 
     def update(self, data):
@@ -34,6 +35,7 @@ class Linreg:
         self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'Time', 'Colors']])
         self.t1 = data.keys()[0]
         self.t2 = data.keys()[2]
+        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe())
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
 

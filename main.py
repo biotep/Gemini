@@ -1,7 +1,7 @@
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource
-from bokeh.models.widgets import  Select, TextInput, Button, Div, RadioButtonGroup, Paragraph, Tabs, TableColumn, DataTable, DateFormatter
+from bokeh.models.widgets import  Select, TextInput, Button, Div, RadioButtonGroup, Paragraph, Tabs, TableColumn, DataTable, DateFormatter, PreText
 import bokeh.palettes as bk_pal
 import configparser
 import time
@@ -39,13 +39,38 @@ class Gemini:
         self.DEFAULT_TICKERS = self.collect_downloaded_symbols()
         self.view_setup()
 
-    def tickerInfoTextSetup(self, ticker):
-        self.catalog.loc[self.catalog.STOCK.isin([ticker])][['COMPANY', 'INDUSTRY']]
+    def tickerInfoTextSetup(self):
+        ticker1 = self.ticker1.value
+        ticker2 = self.ticker2.value
+        company_name1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        industry1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        marketcap1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        ebidta1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+
+        company_name2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        industry2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        marketcap2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        ebidta2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+
+        #print(company_name, industry, marketcap, ebidta)
+
+        self.tickerColumn1 = Div(text="Company Name", width=120)
+        self.tickerColumn2 = Div(text="Industry", width=120)
+        self.tickerInfo1 = Div(text=company_name1, width=200)
+        self.tickerInfo2 = Div(text=industry1, width=200)
+        self.tickerInfo3 = Div(text='Market cap: ' + marketcap1, width=200)
+        self.tickerInfo4 = Div(text='EBIDTA: ' + ebidta1, width=200)
+
+        self.tickerInfo5 = Div(text=company_name2, width=200)
+        self.tickerInfo6 = Div(text=industry2, width=200)
+        self.tickerInfo7 = Div(text='Market cap: ' + marketcap2, width=200)
+        self.tickerInfo8 = Div(text='EBIDTA: ' + ebidta2, width=200)
+
+        #return '<b>'+company_name+'</b>', industry, marketcap, ebidta
 
 
     def view_setup(self):
-        text1 = Div(text="Pair Selector:")
-        text1.width = 150
+        self.text1 = Div(text="Pair Selector:", width = 150)
         self.timeframebutton = RadioButtonGroup(labels=["Daily", "Hourly"], active=0, width=140)
         self.timeframebutton.on_change("active", self.timeframe_change)
 
@@ -55,29 +80,27 @@ class Gemini:
         self.ticker2.on_change('value', self.ticker2_change)
         self.data = self.get_data(self.ticker1.value, self.ticker2.value)
 
-        text2 = Div(text="stock information:", width = 300)
-        text3 = Div(text='COMPANY INDUSTRY MARKETCAP EBIDTA', width = 300)
+        self.text2 = Div(text="stock information:", width = 400)
+        self.text3 = Div(text='---------------------------------------------------------', width = 400)
+        text4 = Div(text='COMPANY INDUSTRY MARKETCAP EBIDTA', width=400)
 
         #changing the columndatasource on the main screen to hold only stock information
-        self.source = ColumnDataSource(data=dict(date=[], Close=[], Norm=[], Time=[], Colors=[]))
+        #self.source = ColumnDataSource(data=dict(date=[], Close=[], Norm=[], Time=[], Colors=[]))
 
-        self.source.data = self.source.from_df(self.catalog.loc[self.catalog.STOCK.isin([self.ticker1.value, self.ticker2.value])])
-        columns = [
-            TableColumn(field="COMPANY", title="COMPANY"),
-            TableColumn(field="INDUSTRY", title="INDUSTRY"),
-            TableColumn(field="MARKETCAP", title="MARKETCAP"),
-            TableColumn(field="EBIDTA", title="EBIDTA")
-        ]
-        data_table = DataTable(source = self.source, columns=columns, width=300, height=100)
+        #self.source.data = self.source.from_df(self.catalog.loc[self.catalog.STOCK.isin([self.ticker1.value, self.ticker2.value])])
 
-        text4 = Div(text="Ticker downloader:", width = 150)
+        self.tickerInfoTextSetup()
+        #company_name1, industry1, marketcap1, ebidta1 = self.tickerInfoTextSetup(self.ticker1.value)
+        #company_name2, industry2, marketcap2, ebidta2 = self.tickerInfoTextSetup(self.ticker2.value)
+
+        self.text5 = Div(text="Ticker downloader:", width = 150)
         self.tickerdownloader = TextInput(value='',width = 80)
         self.tickerdownloadbutton = Button(label='Press to download', button_type='default', disabled=False, width = 50)
         self.tickerdownloadbutton.on_click(self.tickerdownloadbutton_handler)
 
         self.widgets = column(
-            row(column(text1, self.timeframebutton, self.ticker1, self.ticker2), column(text2, text3, data_table),
-                column(text4, self.tickerdownloader, self.tickerdownloadbutton)))
+            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2), column(column(self.text2, self.text3), row(self.tickerInfo1, self.tickerInfo2),  row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),  row(self.tickerInfo7, self.tickerInfo8)),
+                column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))
         main_row = row(self.widgets)
         layout = column(main_row)
         self.linreg = Linreg(self.data)
@@ -253,6 +276,14 @@ class Gemini:
         t1, t2 = self.ticker1.value, self.ticker2.value
         if t1 and t2:
             self.data = self.get_data(t1, t2)
+
+        self.tickerInfoTextSetup()
+        self.widgets = column(
+            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2),
+                column(column(self.text2, self.text3), row(self.tickerInfo1, self.tickerInfo2),
+                       row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),
+                       row(self.tickerInfo7, self.tickerInfo8)),
+                column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))
 
         self.linreg.update(self.data)
         self.price_relation.update(self.data)

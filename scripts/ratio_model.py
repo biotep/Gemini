@@ -15,8 +15,8 @@ class Ratio_model:
         self.t2 = self.data.keys()[2]
 
 
-        self.p1 = figure(plot_width=900, plot_height=300, tools=self.tools, x_axis_type="datetime")
-        self.p2 = figure(plot_width=900, plot_height=300, tools=self.tools, x_axis_type="datetime")
+        self.p1 = figure(plot_width=1100, plot_height=300, tools=self.tools, x_axis_type="datetime")
+        self.p2 = figure(plot_width=1100, plot_height=300, tools=self.tools, x_axis_type="datetime")
 
         self.p1.title.text = 'Ratio of prices: '+ self.t1 + ' and ' + self.t2
         self.p1.line('date', 'Ratio', source=self.source,  line_width=2, color='black', alpha=0.8)

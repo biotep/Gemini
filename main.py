@@ -12,18 +12,29 @@ import pandas as pd
 import os
 import os.path
 from bs4 import BeautifulSoup
+import getpass
+
 
 from scripts.linreg import Linreg
 from scripts.price_relation import Price_relation
 from scripts.ratio_model import Ratio_model
+from scripts.correlation_matrix import Correlation_matrix
 
 
+from pathlib import Path
+home = str(Path.home())
+
+username = getpass.getuser()
 config = configparser.ConfigParser()
-config.read('/Users/Uriel/Documents/Python/Ibis/config.ini')
+configFile = home + '/Documents/Python/Ibis/config.ini'
+
+config.read(configFile)
 history_dir = config['History directory']['history_dir']
 history_root = config['History directory']['history_dir']
 server = config['Server']['server_document']
 catalog_file = history_root+"catalog.csv"
+ib_server = config['IB']['IB_Server']
+ib_port = config['IB']['IB_Port']
 
 
 class Gemini:
@@ -42,11 +53,6 @@ class Gemini:
     def tickerInfoTextSetup(self):
         ticker1 = self.ticker1.value
         ticker2 = self.ticker2.value
-        self.infoSource1 = ColumnDataSource(data=dict(Stock=[], Company=[], Industry=[], Marketcap=[], Ebidta=[]))
-        self.infoSource2 = ColumnDataSource(data=dict(Stock=[], Company=[], Industry=[], Marketcap=[], Ebidta=[]))
-        self.infoSource1.data = self.infoSource1.from_df(self.catalog[self.catalog['STOCK']==ticker1][['STOCK', 'COMPANY', 'INDUSTRY', 'MARKETCAP', 'EBIDTA']])
-        self.infoSource2.data = self.infoSource2.from_df(self.catalog[self.catalog['STOCK']==ticker2][['STOCK', 'COMPANY', 'INDUSTRY', 'MARKETCAP', 'EBIDTA']])
-
 
         company_name1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         industry1 = self.catalog.loc[self.catalog.STOCK.isin([ticker1])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
@@ -57,10 +63,6 @@ class Gemini:
         industry2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         marketcap2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         ebidta2 = self.catalog.loc[self.catalog.STOCK.isin([ticker2])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
-
-        infoDf = pd.DataFrame()
-
-        #print(company_name, industry, marketcap, ebidta)
 
         self.tickerColumn1 = Div(text="Company Name", width=120)
         self.tickerColumn2 = Div(text="Industry", width=120)
@@ -74,22 +76,6 @@ class Gemini:
         self.tickerInfo7 = Div(text='Market cap: ' + marketcap2, width=300)
         self.tickerInfo8 = Div(text='EBIDTA: ' + ebidta2, width=300)
 
-
-
-        # self.tickerColumn1 = Div(text="Company Name", width=120)
-        # self.tickerColumn2 = Div(text="Industry", width=120)
-        # self.tickerInfo1 = Div(text='<b>'+self.infoSource1.data['COMPANY'][0]+'</b>', width=300)
-        # self.tickerInfo2 = Div(text=self.infoSource1.data['INDUSTRY'][0], width=300)
-        # self.tickerInfo3 = Div(text='Market cap: ' + str(self.infoSource1.data['MARKETCAP'][0]), width=300)
-        # self.tickerInfo4 = Div(text='EBIDTA: ' +  str(self.infoSource1.data['EBIDTA'][0]), width=300)
-        #
-        # self.tickerInfo5 = Div(text='<b>'+self.infoSource2.data['COMPANY'][0]+'</b>', width=300)
-        # self.tickerInfo6 = Div(text=self.infoSource2.data['INDUSTRY'][0], width=300)
-        # self.tickerInfo7 = Div(text='Market cap: ' +  str(self.infoSource2.data['MARKETCAP'][0]), width=300)
-        # self.tickerInfo8 = Div(text='EBIDTA: ' + str(self.infoSource2.data['EBIDTA'][0]), width=300)
-
-
-        #return '<b>'+company_name+'</b>', industry, marketcap, ebidta
 
 
     def view_setup(self):
@@ -140,17 +126,18 @@ class Gemini:
         curdoc().title = "Stocks"
 
     def ticker1_change(self,attrname, old, new):
-        print('ticker 1 change: ', old, '--->', new)
-        self.tickerInfo1.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        self.tickerInfo1.text = '<b>' + self.catalog.loc[self.catalog.STOCK.isin([new])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0] + '</b>'
         self.tickerInfo2.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
-        self.tickerInfo3.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
-        self.tickerInfo4.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        self.tickerInfo3.text = 'Market cap: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        self.tickerInfo4.text = 'EBIDTA: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
 
         self.update()
 
     def ticker2_change(self, attrname, old, new):
-        print('ticker 2 change')
-        self.tickerInfo2.text = "BASS"
+        self.tickerInfo5.text = '<b>' + self.catalog.loc[self.catalog.STOCK.isin([new])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0] + '</b>'
+        self.tickerInfo6.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        self.tickerInfo7.text = 'Market cap: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
+        self.tickerInfo8.text = 'EBIDTA: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['EBIDTA']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         self.update()
 
 
@@ -207,7 +194,7 @@ class Gemini:
 
         print('not connected...trying to connect')
         if not ib.isConnected():
-            ib.connect('162.243.65.96', 4002, clientId=14)
+            ib.connect(ib_server, ib_port, clientId=14)
 
         contract1 = Stock(symbol_to_download, venue, ccy)
         try:
@@ -282,6 +269,7 @@ class Gemini:
         return dff
 
     def get_data(self, t1, t2):
+        print("t1 -> ", t1)
         df1 = self.load_ticker(t1)
         df2 = self.load_ticker(t2)
         self.data = pd.concat([df1, df2], axis=1)
@@ -295,6 +283,9 @@ class Gemini:
         crange = self.data['Time'].max() - self.data['Time'].min()
         cols = (self.data['Time'] - cmin) * 255 // crange
         self.data['Colors'] = np.array(bk_pal.Plasma256)[cols.astype(int).tolist()]
+        nrows = int((self.data['t1'].count()) / 2)
+        tickers = pd.DataFrame(np.tile([t1,t2], nrows), index=self.data.index, columns=['Ticker'])
+        self.data = pd.concat([self.data, tickers], axis=1)
         print(self.data.head())
         return self.data
 
@@ -306,17 +297,6 @@ class Gemini:
         t1, t2 = self.ticker1.value, self.ticker2.value
         if t1 and t2:
             self.data = self.get_data(t1, t2)
-        #self.infoSource1.data = self.infoSource1.from_df(self.catalog[self.catalog['STOCK']==self.ticker1.value][['STOCK', 'COMPANY', 'INDUSTRY', 'MARKETCAP', 'EBIDTA']])
-        #self.infoSource2.data = self.infoSource2.from_df(self.catalog[self.catalog['STOCK']==self.ticker2.value][['STOCK', 'COMPANY', 'INDUSTRY', 'MARKETCAP', 'EBIDTA']])
-
-        #self.tickerInfoTextSetup()
-
-        # self.widgets = column(
-        #     row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2),
-        #         column(column(self.text2), row(self.tickerInfo1, self.tickerInfo2),
-        #                row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),
-        #                row(self.tickerInfo7, self.tickerInfo8)),
-        #         column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))
 
         self.linreg.update(self.data)
         self.price_relation.update(self.data)

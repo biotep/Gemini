@@ -91,12 +91,7 @@ class Gemini:
 
         self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
 
-        text4 = Div(text='COMPANY INDUSTRY MARKETCAP EBIDTA', width=400)
 
-        #changing the columndatasource on the main screen to hold only stock information
-        #self.source = ColumnDataSource(data=dict(date=[], Close=[], Norm=[], Time=[], Colors=[]))
-
-        #self.source.data = self.source.from_df(self.catalog.loc[self.catalog.STOCK.isin([self.ticker1.value, self.ticker2.value])])
 
         self.tickerInfoTextSetup()
 
@@ -107,7 +102,7 @@ class Gemini:
         self.tickerdownloadbutton.on_click(self.tickerdownloadbutton_handler)
 
         self.widgets = column(
-            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2), column(column(self.text2), row(self.tickerInfo1, self.tickerInfo2),  row(self.tickerInfo3, self.tickerInfo4), row(self.tickerInfo5, self.tickerInfo6),  row(self.tickerInfo7, self.tickerInfo8)),
+            row(column(self.text1, self.timeframebutton, self.ticker1, self.ticker2), column(column(self.text2), row(self.tickerInfo1, self.tickerInfo5),  row(self.tickerInfo2, self.tickerInfo6), row(self.tickerInfo3, self.tickerInfo7),  row(self.tickerInfo4, self.tickerInfo8)),
                 column(self.text5, self.tickerdownloader, self.tickerdownloadbutton)))
         main_row = row(self.widgets)
         layout = column(main_row)

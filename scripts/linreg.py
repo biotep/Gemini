@@ -1,5 +1,5 @@
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, Panel, Slope, PreText
+from bokeh.models import ColumnDataSource, Panel, Slope, PreText, Paragraph, Div
 from bokeh.layouts import column, row
 import numpy as np
 
@@ -28,7 +28,15 @@ class Linreg:
         self.p.yaxis.axis_label = self.t2
         self.stats = PreText(text='', width=500)
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
-        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\ncorrelation : " + str(corrcoeff)
+        self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
+        self.filedatetext2 = data.t2.index[:1][0].__str__().split()[0]
+        if self.filedatetext1 != self.filedatetext2:
+            self.filedatetext3 = " File enddate diff!"
+        else:
+            self.filedatetext3 = " OK"
+
+
+        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
         self.p.grid.grid_line_color = None
         self.p.background_fill_color = "#eedddd"
 
@@ -71,7 +79,16 @@ class Linreg:
         self.t1 = data.keys()[0]
         self.t2 = data.keys()[2]
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
-        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\ncorrelation : " + str(corrcoeff)
+
+        self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
+        self.filedatetext2 = data.t2.index[:1][0].__str__().split()[0]
+        if self.filedatetext1 != self.filedatetext2:
+            self.filedatetext3 = " File enddate diff!"
+        else:
+            self.filedatetext3 = " OK"
+
+        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        #self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\ncorrelation : " + str(corrcoeff)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
         #Slope update

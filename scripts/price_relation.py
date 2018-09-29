@@ -10,8 +10,8 @@ class Price_relation:
 
         self.p = figure(plot_width=900, plot_height=300, tools=self.tools, x_axis_type="datetime", active_drag="xbox_select")
         self.p.title.text = 'Normalised prices: ' + data.keys()[0] + " and " + data.keys()[2]
-        self.p.line('date', 't1_normal', source=self.source, line_width=2, color='red', alpha=0.4, legend='Ticker')
-        self.p.line('date', 't2_normal', source=self.source, line_width=2, color='blue', alpha=0.4, legend='Ticker')
+        self.p.line('date', 't1_normal', source=self.source, line_width=2, color='red', alpha=0.4, legend='Top')
+        self.p.line('date', 't2_normal', source=self.source, line_width=2, color='blue', alpha=0.4, legend='Bottom')
         self.p.legend.location = "bottom_left"
         self.p.legend.click_policy = "hide"
         self.p.circle('date', 't1_normal', size=1.5, source=self.source, color=None, selection_color="green")
@@ -27,3 +27,4 @@ class Price_relation:
         print(data.head())
         self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'Time', 'Colors', 'Ticker']])
         self.p.title.text = 'Normalised prices: ' + data.keys()[0] + " and " + data.keys()[2]
+        self.p.legend[0].plot.legend[0].plot.legend[0]._property_values['items'][0].label['value'] = 'Marc'

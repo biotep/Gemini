@@ -101,6 +101,7 @@ class Gemini:
         self.tickerInfoTextSetup()
 
         self.text5 = Div(text="Ticker downloader:", width = 150)
+        self.text01 = Div(text="File Dates:", width=150)
         self.tickerdownloader = TextInput(value='',width = 80)
         self.tickerdownloadbutton = Button(label='Press to download', button_type='default', disabled=False, width = 50)
         self.tickerdownloadbutton.on_click(self.tickerdownloadbutton_handler)

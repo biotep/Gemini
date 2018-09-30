@@ -236,8 +236,6 @@ class Gemini:
         time.sleep(1)
         #get the fundamental data:
 
-
-
         return df0
 
     def collect_downloaded_symbols(self):
@@ -257,19 +255,22 @@ class Gemini:
         df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
 
         def normalize(data):
-            ca = (data.Close - data.Close.mean()) / (data.Close.max() - data.Close.min())
-            return ca
+            norm = (data.Close - data.Close.mean()) / (data.Close.max() - data.Close.min())
+            return norm
 
         df['Norm'] = normalize(df)
         dff = pd.DataFrame({ticker: df.Close, ticker+'_normal': df.Norm})
-        return dff
+        return dff, df
 
     def get_data(self, t1, t2):
         print("t1 -> ", t1)
-        df1 = self.load_ticker(t1)
-        df2 = self.load_ticker(t2)
+        df1, t1_data = self.load_ticker(t1)
+        df2, t2_data = self.load_ticker(t2)
         self.data = pd.concat([df1, df2], axis=1)
         self.data = self.data.dropna()
+        t1_data = t1_data.reindex_like(t2_data).dropna()
+        t2_data = t2_data.reindex_like(t1_data).dropna()
+
         self.data['t1'] = self.data[t1]
         self.data['t2'] = self.data[t2]
         self.data['t1_normal'] = self.data[t1 + '_normal']
@@ -283,23 +284,23 @@ class Gemini:
         tickers = pd.DataFrame(np.tile([t1,t2], nrows), index=self.data.index, columns=['Ticker'])
         self.data = pd.concat([self.data, tickers], axis=1)
         print(self.data.head())
-        return self.data
+        return self.data, t1_data, t2_data
 
     def update(self, selected=None):
+        print("UPDATE CALLED")
         self.history_dir = history_dir + self.TIMEFRAME + "/"
         self.DEFAULT_TICKERS = self.collect_downloaded_symbols()
         self.ticker2.options = self.nix(self.ticker1.value, self.DEFAULT_TICKERS)
         self.ticker1.options = self.nix(self.ticker2.value, self.DEFAULT_TICKERS)
         t1, t2 = self.ticker1.value, self.ticker2.value
+        # if t1 and t2:
+        #     self.data, t1_data, t2_data = self.get_data(t1, t2)
         if t1 and t2:
-            self.data = self.get_data(t1, t2)
-
+            self.data, t1_data, t2_data = self.get_data(t1, t2)
         self.linreg.update(self.data)
-        self.price_relation.update(self.data)
+        self.price_relation.update(self.data, t1_data, t2_data)
         self.ratio_model.update(self.data)
 
 
-
-        #TODO update_stats(data, t1, t2)
 
 gemini=Gemini()

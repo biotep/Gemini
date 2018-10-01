@@ -87,7 +87,7 @@ class Gemini:
         self.ticker2 = Select(value=self.DEFAULT_TICKERS[1], options=self.nix(self.DEFAULT_TICKERS[0], self.DEFAULT_TICKERS), width=110)
         self.ticker1.on_change('value', self.ticker1_change)
         self.ticker2.on_change('value', self.ticker2_change)
-        self.data = self.get_data(self.ticker1.value, self.ticker2.value)
+        self.data ,self.t1_data, self.t2_data = self.get_data(self.ticker1.value, self.ticker2.value)
 
         self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
 
@@ -109,7 +109,7 @@ class Gemini:
 
 
         self.linreg = Linreg(self.data)
-        self.price_relation = Price_relation(self.data)
+        self.price_relation = Price_relation(self.data, self.t1_data, self.t2_data)
         self.ratio_model = Ratio_model(self.data)
 
         self.tab1 = self.linreg.tab

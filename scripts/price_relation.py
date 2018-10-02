@@ -1,6 +1,7 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Panel
 from bokeh.layouts import column, row
+import pandas as pd
 from math import pi
 
 class Price_relation:
@@ -15,20 +16,33 @@ class Price_relation:
 
         #---------------------------------
 
+        self.t1_data=t1_data
 
-        inc = t1_data.Close > t1_data.Open
-        dec = t1_data.Open > t1_data.Close
-        w = 12 * 60 * 60 * 1000  # half day in ms
+        self.t1_data_open = t1_data.Open.resample('W-FRI').first()
+        self.t1_data_high = t1_data.High.resample('W-MON').max()
+        self.t1_data_low = t1_data.Low.resample('W-MON').min()
+        self.t1_data_close = t1_data.Close.resample('W-FRI').last().resample('W-MON').last()
+
+        self.t1_df = pd.concat([self.t1_data_open, self.t1_data_high, self.t1_data_low, self.t1_data_close], axis=1)
+        self.t1_df['date']=pd.to_datetime(self.t1_df.index)
+        self.t1_df.columns = ['open', 'high', 'low', 'close', 'date']
+        dec = self.t1_df.open > self.t1_df.close
+        inc = self.t1_df.close > self.t1_df.open
+
+        w = 12 * 60 * 60 * 1000  * 7 # half day in ms
 
         TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
-        self.c1 = figure(x_axis_type="datetime", tools=TOOLS, plot_width=900, title=data.keys()[0])
+        print(self.t1_df.head(19))
+
+        self.c1 = figure(x_axis_type="datetime", tools=TOOLS, plot_width=900, plot_height=300, title=data.keys()[0])
         self.c1.xaxis.major_label_orientation = pi / 4
         self.c1.grid.grid_line_alpha = 0.3
 
-        self.c1.segment(t1_data.index, t1_data.High, t1_data.index, t1_data.Low, color="black")
-        self.c1.vbar(t1_data.index[inc], w, t1_data.Open[inc], t1_data.Close[inc], fill_color="#D5E1DD", line_color="black")
-        self.c1.vbar(t1_data.index[dec], w, t1_data.Open[dec], t1_data.Close[dec], fill_color="#F2583E", line_color="black")
+        self.c1.segment(self.t1_df.index, self.t1_df.high, self.t1_df.index, self.t1_df.low, color="black")
+        self.c1.vbar(x=self.t1_df.index[inc], width=w, bottom=self.t1_df.open[inc],  top=self.t1_df.close[inc], fill_color="#37e57c", line_color="black")
+        self.c1.vbar(x=self.t1_df.index[dec], width=w, bottom=self.t1_df.open[dec],  top=self.t1_df.close[dec], fill_color="#F2583E", line_color="black")
+
 
         #---------------------------------
 

@@ -12,6 +12,7 @@ class Linreg:
 
         self.t1 = data.keys()[0]
         self.t2 = data.keys()[2]
+
         linreg = np.polyfit(data.t1, data.t2, 1)
         self.gradient = linreg[0]
         self.intercept = linreg[1]

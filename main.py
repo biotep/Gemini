@@ -18,6 +18,7 @@ import getpass
 from scripts.linreg import Linreg
 from scripts.price_relation import Price_relation
 from scripts.ratio_model import Ratio_model
+from scripts.residual_model import Residual_model
 from scripts.correlation_matrix import Correlation_matrix
 
 
@@ -109,13 +110,15 @@ class Gemini:
 
 
         self.linreg = Linreg(self.data)
-        self.price_relation = Price_relation(self.data, self.t1_data, self.t2_data)
+        self.price_relation = Price_relation(self.data)
         self.ratio_model = Ratio_model(self.data)
+        self.residual_model = Residual_model(self.data)
 
         self.tab1 = self.linreg.tab
         self.tab2 = self.price_relation.tab
         self.tab3 = self.ratio_model.tab
-        tabs = Tabs(tabs = [self.tab1, self.tab2, self.tab3])
+        self.tab4 = self.residual_model.tab
+        tabs = Tabs(tabs = [self.tab1, self.tab2, self.tab3, self.tab4])
 
         curdoc().add_root(layout)
         curdoc().add_root(tabs)
@@ -271,10 +274,18 @@ class Gemini:
         t1_data = t1_data.reindex_like(t2_data).dropna()
         t2_data = t2_data.reindex_like(t1_data).dropna()
 
+        linreg = np.polyfit(self.data[t1], self.data[t2], 1)
+        gradient = linreg[0]
+        intercept = linreg[1]
+
+        residual = (gradient * self.data[t1] + intercept) - self.data[t2]
+
+
         self.data['t1'] = self.data[t1]
         self.data['t2'] = self.data[t2]
         self.data['t1_normal'] = self.data[t1 + '_normal']
         self.data['t2_normal'] = self.data[t2 + '_normal']
+        self.data['residual'] = residual
         self.data['Time'] = self.data.index.to_julian_date()
         cmin = self.data['Time'].min()
         crange = self.data['Time'].max() - self.data['Time'].min()
@@ -298,9 +309,9 @@ class Gemini:
         if t1 and t2:
             self.data, t1_data, t2_data = self.get_data(t1, t2)
         self.linreg.update(self.data)
-        self.price_relation.update(self.data, t1_data, t2_data)
+        self.price_relation.update(self.data)
         self.ratio_model.update(self.data)
-
+        self.residual_model.update(self.data)
 
 
 gemini=Gemini()

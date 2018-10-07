@@ -5,7 +5,7 @@ import numpy as np
 
 class Residual_model:
     def __init__(self, data):
-        self.source = ColumnDataSource(data=dict(Time=[], residual=[], LR=[], STD=[], Z=[], Un=[], Ln=[], Ux=[], Lx=[]))
+        self.source = ColumnDataSource(data=dict(Time=[], residual=[], Beta=[], Alfa=[], STD=[], Z=[], Un=[], Ln=[], Ux=[], Lx=[]))
         self.data = data
         self.LRperiod = 20
         self.STDperiod = 10
@@ -40,7 +40,7 @@ class Residual_model:
         self.STD_slider.on_change('value', self.STD_slider_callback)
         self.update(self.data)
 
-        layout = row(column(self.p1, self.p2), column(self.LR_slider, self.STD_slider))
+        layout = row(column(self.p1), column(self.LR_slider, self.STD_slider))
         self.tab = Panel(child=layout, title='Residual Model')
 
     def LR_slider_callback(self, attr, old, new):
@@ -59,7 +59,7 @@ class Residual_model:
         self.gradient = linreg[0]
         self.intercept = linreg[1]
 
-        data['LR'] = data.Ratio.rolling(window=self.MAperiod).mean()
+        data['LR'] = data.Ratio.rolling(window=self.LRperiod).mean()
         data['STD'] = data.Ratio.rolling(window=self.STDperiod).std()
         data['Z'] = (data.Ratio - data.MA) / data.STD
         data['Un'] = data.MA + data.STD * self.EntryT

@@ -2,6 +2,8 @@ from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Panel, Slope, PreText, Paragraph, Div
 from bokeh.layouts import column, row
 import numpy as np
+import statsmodels.formula.api as sm
+from scipy.odr import *
 
 class Linreg:
     def __init__(self, data):
@@ -14,20 +16,33 @@ class Linreg:
         self.t2 = data.keys()[2]
 
         linreg = np.polyfit(data.t1, data.t2, 1)
-        self.gradient = linreg[0]
-        self.intercept = linreg[1]
+        self.gradient_ols = linreg[0]
+        self.intercept_ols = linreg[1]
+        self.smols = sm.ols(formula="t2 ~ t1", data=data[['t1', 't2']]).fit()
+        self.tls_out = self.tls(data.t1, data.t2)
+        self.gradient_tls=self.tls_out.beta[0]
+        self.intercept_tls = self.tls_out.beta[1]
+        self.smols_summary=str(self.smols.summary(yname=self.t2, xname=['Intercept','Gradient'],  title=str("Ordinary least squares of " + self.t2 + " on " + self.t1)))
+        self.tls_summary = "\n Total least squares: \n" + "slope: " + str(self.tls_out.beta[0]) + " intercept: " + str(self.tls_out.beta[1])
+
+
+
 
         self.tools = 'pan,wheel_zoom,xbox_select,reset'
 
-        self.p = figure(plot_width=550, plot_height=550, tools='pan,wheel_zoom,box_select,reset')
+        self.p = figure(plot_width=450, plot_height=450, tools='pan,wheel_zoom,box_select,reset')
         self.p.scatter(x='t1', y='t2', marker='asterisk', size=5, color='Colors', alpha=0.6,  source=self.source)
         self.p.circle('t1', 't2', size=2, source=self.source, selection_color="orange", alpha=0.2,  selection_alpha=0.2)
 
-        self.slope = Slope(gradient=self.gradient, y_intercept=self.intercept, line_color='green', line_dash='dashed', line_width=3.5)
-        self.p.add_layout(self.slope)
+        self.slope_ols = Slope(gradient=self.gradient_ols, y_intercept=self.intercept_ols, line_color='green', line_dash='dashed', line_width=2.5)
+        self.slope_tls = Slope(gradient=self.gradient_tls, y_intercept=self.intercept_tls, line_color='blue', line_dash='dashed', line_width=2.5)
+
+        self.p.add_layout(self.slope_ols)
+        self.p.add_layout(self.slope_tls)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
-        self.stats = PreText(text='', width=500)
+        self.stats = PreText(text='', width=650)
+
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
         self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
         self.filedatetext2 = data.t2.index[:1][0].__str__().split()[0]
@@ -37,7 +52,8 @@ class Linreg:
             self.filedatetext3 = " OK"
 
 
-        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        #self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
         self.p.grid.grid_line_color = None
         self.p.background_fill_color = "#eedddd"
 
@@ -55,8 +71,28 @@ class Linreg:
         self.h.ygrid.band_fill_alpha = 0.1
         self.h.ygrid.band_fill_color = "navy"
 
-        layout = row(self.p, column(self.stats, self.h))
+        layout = row(column(self.p,self.h),self.stats)
         self.tab = Panel(child=layout, title='Linear Regression')
+
+    def tls(self, x, y):
+        def linear_func(p, x):
+            m, c = p
+            return m * x + c
+
+        # Create a model for fitting.
+        linear_model = Model(linear_func)
+
+        # Create a RealData object using our initiated data from above.
+        data = RealData(x, y)
+
+        # Set up ODR with the model and data.
+        odr = ODR(data, linear_model, beta0=[0., 1.])
+
+        # Run the regression.
+        out = odr.run()
+        return out
+
+
 
     def crosscorr(self, x, y):
         npts = x.count()
@@ -81,6 +117,15 @@ class Linreg:
         self.t2 = data.keys()[2]
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
 
+        self.smols = sm.ols(formula="t2 ~ t1", data=data[['t1', 't2']]).fit()
+        self.tls_out = self.tls(data.t1, data.t2)
+
+
+        self.smols_summary=str(self.smols.summary(yname=self.t2, xname=['Intercept','Gradient'], title=str("Ordinary least squares of " + self.t2 + " on " + self.t1)))
+        self.tls_summary = "\n Total least squares: \n" + "slope: " + str(self.tls_out.beta[0]) + " intercept: " + str(self.tls_out.beta[1])
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+
+
         self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
         self.filedatetext2 = data.t2.index[:1][0].__str__().split()[0]
         if self.filedatetext1 != self.filedatetext2:
@@ -88,16 +133,21 @@ class Linreg:
         else:
             self.filedatetext3 = " OK"
 
-        self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+
+        #self.stats.text = self.smols_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
         #self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\ncorrelation : " + str(corrcoeff)
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
         #Slope update
         linreg = np.polyfit(data.t1, data.t2, 1)
-        self.gradient = linreg[0]
-        self.intercept = linreg[1]
-        self.slope.gradient = self.gradient
-        self.slope.y_intercept = self.intercept
-        #self.slope = Slope(gradient=self.gradient, y_intercept=self.intercept, line_color='green', line_dash='dashed', line_width=3.5)
-
+        self.gradient_ols = linreg[0]
+        self.intercept_ols = linreg[1]
+        self.slope_ols.gradient = self.gradient_ols
+        self.slope_ols.y_intercept = self.intercept_ols
+        self.gradient_tls=self.tls_out.beta[0]
+        self.intercept_tls = self.tls_out.beta[1]
+        self.slope_tls.gradient = self.gradient_tls
+        self.slope_tls.y_intercept = self.intercept_tls
 

@@ -13,6 +13,7 @@ import os
 import os.path
 from bs4 import BeautifulSoup
 import getpass
+import statsmodels.formula.api as sm
 
 
 from scripts.linreg import Linreg

@@ -61,12 +61,10 @@ class Price_relation:
 
         self.r1 = figure(x_axis_type="datetime", tools=TOOLS, plot_width=900, plot_height=300, title=data.keys()[0])
         self.r1.title.text = 'Residuals of lineal regression of ' + data.keys()[0] + " and " + data.keys()[2]
-        self.r1.line('date', 'residual', source=self.source, line_width=2, color='green', alpha=0.4, legend='Top')
+        self.r1.line('date', 'residual', source=self.source, line_width=2, color='green', alpha=0.4)
 
         layout = column(self.p, self.r1)
         self.tab = Panel(child=layout, title='Price Relation')
-
-
 
 
     def update(self, data):

@@ -25,9 +25,6 @@ class Linreg:
         self.smols_summary=str(self.smols.summary(yname=self.t2, xname=['Intercept','Gradient'],  title=str("Ordinary least squares of " + self.t2 + " on " + self.t1)))
         self.tls_summary = "\n Total least squares: \n" + "slope: " + str(self.tls_out.beta[0]) + " intercept: " + str(self.tls_out.beta[1])
 
-
-
-
         self.tools = 'pan,wheel_zoom,xbox_select,reset'
 
         self.p = figure(plot_width=450, plot_height=450, tools='pan,wheel_zoom,box_select,reset')

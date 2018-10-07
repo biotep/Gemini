@@ -14,7 +14,7 @@ import os.path
 from bs4 import BeautifulSoup
 import getpass
 import statsmodels.formula.api as sm
-
+from scipy.odr import *
 
 from scripts.linreg import Linreg
 from scripts.price_relation import Price_relation
@@ -78,8 +78,6 @@ class Gemini:
         self.tickerInfo7 = Div(text='Market cap: ' + marketcap2, width=300)
         self.tickerInfo8 = Div(text='EBIDTA: ' + ebidta2, width=300)
 
-
-
     def view_setup(self):
         self.text1 = Div(text="Pair Selector:", width = 150)
         self.timeframebutton = RadioButtonGroup(labels=["Daily", "Hourly"], active=0, width=140)
@@ -92,8 +90,6 @@ class Gemini:
         self.data ,self.t1_data, self.t2_data = self.get_data(self.ticker1.value, self.ticker2.value)
 
         self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
-
-
 
         self.tickerInfoTextSetup()
 

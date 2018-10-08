@@ -262,6 +262,18 @@ class Gemini:
         dff = pd.DataFrame({ticker: df.Close, ticker+'_normal': df.Norm})
         return dff, df
 
+    def tls_calc(self, x, y):
+        def linear_func(p, x):
+            m, c = p
+            return m * x + c
+
+        linear_model = Model(linear_func)
+        data = RealData(x, y)
+        odr = ODR(data, linear_model, beta0=[0., 1.])
+        out = odr.run()
+        residual_tls = (y - ((x*out.beta[0]) + out.beta[1]))
+        return residual_tls
+
     def get_data(self, t1, t2):
         print("t1 -> ", t1)
         df1, t1_data = self.load_ticker(t1)
@@ -275,7 +287,9 @@ class Gemini:
         gradient = linreg[0]
         intercept = linreg[1]
 
-        residual = (gradient * self.data[t1] + intercept) - self.data[t2]
+        #residual = (gradient * self.data[t1] + intercept) - self.data[t2]
+        residual_TLS = self.tls_calc(self.data[t1], self.data[t2])
+        residual = residual_TLS
 
 
         self.data['t1'] = self.data[t1]

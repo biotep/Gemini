@@ -287,16 +287,17 @@ class Gemini:
         gradient = linreg[0]
         intercept = linreg[1]
 
-        #residual = (gradient * self.data[t1] + intercept) - self.data[t2]
-        residual_TLS = self.tls_calc(self.data[t1], self.data[t2])
-        residual = residual_TLS
+        residual_ols = self.data[t2] - (gradient * self.data[t1] + intercept)
+        residual_tls = self.tls_calc(self.data[t1], self.data[t2])
+
 
 
         self.data['t1'] = self.data[t1]
         self.data['t2'] = self.data[t2]
         self.data['t1_normal'] = self.data[t1 + '_normal']
         self.data['t2_normal'] = self.data[t2 + '_normal']
-        self.data['residual'] = residual
+        self.data['residual_ols'] = residual_ols
+        self.data['residual_tls'] = residual_tls
         self.data['Time'] = self.data.index.to_julian_date()
         cmin = self.data['Time'].min()
         crange = self.data['Time'].max() - self.data['Time'].min()

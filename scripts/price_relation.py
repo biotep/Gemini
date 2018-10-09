@@ -11,7 +11,7 @@ class Price_relation:
         self.source=ColumnDataSource()
         self.t1_source = ColumnDataSource()
         self.t2_source = ColumnDataSource()
-        self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'residual', 'Time', 'Colors', 'Ticker']])
+        self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'residual_ols','residual_tls', 'Time', 'Colors', 'Ticker']])
 
         self.tools = 'pan,wheel_zoom,xbox_select,reset'
 
@@ -32,7 +32,10 @@ class Price_relation:
 
         self.r1 = figure(x_axis_type="datetime", tools=TOOLS, plot_width=900, plot_height=300, title=data.keys()[0])
         self.r1.title.text = 'Residuals of lineal regression of ' + data.keys()[0] + " and " + data.keys()[2]
-        self.r1.line('date', 'residual', source=self.source, line_width=2, color='green', alpha=0.4)
+        self.r1.line('date', 'residual_ols', source=self.source, line_width=2, color='green', alpha=0.4, legend='ols')
+        self.r1.line('date', 'residual_tls', source=self.source, line_width=2, color='blue', alpha=0.4, legend='tls')
+        self.r1.legend.location = "bottom_left"
+        self.r1.legend.click_policy = "hide"
 
         layout = column(self.p, self.r1)
         self.tab = Panel(child=layout, title='Price Relation')
@@ -41,7 +44,7 @@ class Price_relation:
     def update(self, data):
         print("Price relation updating...")
         print(data.head())
-        self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'residual', 'Time', 'Colors', 'Ticker']])
+        self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'residual_ols','residual_tls', 'Time', 'Colors', 'Ticker']])
         self.p.title.text = 'Normalised prices: ' + data.keys()[0] + " and " + data.keys()[2]
         self.r1.title.text = 'Residuals of lineal regression of ' + data.keys()[0] + " and " + data.keys()[2]
         self.p.legend[0].plot.legend[0].plot.legend[0]._property_values['items'][0].label['value'] = 'Marc'

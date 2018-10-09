@@ -5,7 +5,7 @@ import numpy as np
 
 class Residual_model:
     def __init__(self, data):
-        self.source = ColumnDataSource(data=dict(Time=[], residual=[], Beta=[], Alfa=[], STD=[], Z=[], Un=[], Ln=[], Ux=[], Lx=[]))
+        self.source = ColumnDataSource(data=dict(Time=[], residual_ols=[],residual_tls=[], Beta=[], Alfa=[], STD=[], Z=[], Un=[], Ln=[], Ux=[], Lx=[]))
         self.data = data
         self.LRperiod = 20
         self.STDperiod = 10
@@ -24,7 +24,7 @@ class Residual_model:
 
 
         self.p1.title.text = 'Residual of prices: '+ self.t1 + ' and ' + self.t2
-        self.p1.line('date', 'residual', source=self.source,  line_width=2, color='black', alpha=0.8)
+        self.p1.line('date', 'residual_tls', source=self.source,  line_width=2, color='black', alpha=0.8)
         self.p1.line('date', 'Un', source=self.source, line_width=1, color='green', alpha=0.5)
         self.p1.line('date', 'Ln', source=self.source, line_width=1, color='blue', alpha=0.5)
         self.p1.line('date', 'Ux', source=self.source, line_width=1, color='red', alpha=0.5)
@@ -67,7 +67,7 @@ class Residual_model:
         data['Ux'] = data.MA + data.STD * self.ExitT
         data['Lx'] = data.MA - data.STD * self.ExitT
 
-        self.source.data = self.source.from_df(data[['Time', 'residual', 'MA', 'STD', 'Z', 'Un', 'Ln', 'Ux', 'Lx']])
+        self.source.data = self.source.from_df(data[['Time', 'residual_ols','residual_tls', 'MA', 'STD', 'Z', 'Un', 'Ln', 'Ux', 'Lx']])
         self.data = data
         self.t1 = data.keys()[0]
         self.t2 = data.keys()[2]

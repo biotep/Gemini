@@ -23,6 +23,7 @@ from scripts.residual_model import Residual_model
 from scripts.correlation_matrix import Correlation_matrix
 
 
+
 from pathlib import Path
 home = str(Path.home())
 
@@ -88,6 +89,7 @@ class Gemini:
         self.ticker1.on_change('value', self.ticker1_change)
         self.ticker2.on_change('value', self.ticker2_change)
         self.data ,self.t1_data, self.t2_data = self.get_data(self.ticker1.value, self.ticker2.value)
+        self.matrix_data = self.create_matrix_data()
 
         self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
 
@@ -110,12 +112,14 @@ class Gemini:
         self.price_relation = Price_relation(self.data)
         self.ratio_model = Ratio_model(self.data)
         self.residual_model = Residual_model(self.data)
+        self.correlation_matrix = Correlation_matrix(self.data)
 
         self.tab1 = self.linreg.tab
         self.tab2 = self.price_relation.tab
         self.tab3 = self.ratio_model.tab
         self.tab4 = self.residual_model.tab
-        tabs = Tabs(tabs = [self.tab1, self.tab2, self.tab3, self.tab4])
+        self.tab5 = self.correlation_matrix.tab
+        tabs = Tabs(tabs = [self.tab1, self.tab2, self.tab3, self.tab4, self.tab5])
 
         curdoc().add_root(layout)
         curdoc().add_root(tabs)
@@ -247,6 +251,17 @@ class Gemini:
                     symbols.append(file.split('.')[0])
         print(symbols)
         return symbols
+
+    def create_matrix_data(self):
+        all_symbols = self.collect_downloaded_symbols()
+        df = pd.DataFrame(columns=all_symbols)
+        for s in all_symbols:
+            df[s] = self.load_ticker(s)[1]['Close']
+        print(df.head())
+        df.dropna(inplace=True)
+        return df
+
+
 
     def load_ticker(self, ticker):
         print("loading ", ticker)

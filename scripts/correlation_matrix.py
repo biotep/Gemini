@@ -17,7 +17,7 @@ class Correlation_matrix:
         self.matrix_data.index.name = 'A'
 
         self.matrix_data = self.matrix_data.stack().rename("value").reset_index()
-        self.matrix_data.to_pickle("/Users/Uriel/Documents/Python/Ibis/Gemini/matrix_data.pkl")
+        #self.matrix_data.to_pickle("/Users/Uriel/Documents/Python/Ibis/Gemini/matrix_data.pkl")
 
         #create plot
         colors = ['#a50026','#d73027','#f46d43','#fdae61','#fee08b','#d9ef8b','#a6d96a','#66bd63','#1a9850','#006837']

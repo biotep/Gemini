@@ -89,7 +89,7 @@ class Gemini:
         self.ticker1.on_change('value', self.ticker1_change)
         self.ticker2.on_change('value', self.ticker2_change)
         self.data ,self.t1_data, self.t2_data = self.get_data(self.ticker1.value, self.ticker2.value)
-        self.matrix_data = self.create_matrix_data()
+        self.all_stocks_data = self.create_all_stocks_data()
 
         self.text2 = Div(text='<center><h3>'+"stock information:"+'</h3></center>', width = 400)
 
@@ -112,7 +112,7 @@ class Gemini:
         self.price_relation = Price_relation(self.data)
         self.ratio_model = Ratio_model(self.data)
         self.residual_model = Residual_model(self.data)
-        self.correlation_matrix = Correlation_matrix(self.data)
+        self.correlation_matrix = Correlation_matrix(self.all_stocks_data)
 
         self.tab1 = self.linreg.tab
         self.tab2 = self.price_relation.tab
@@ -252,13 +252,14 @@ class Gemini:
         print(symbols)
         return symbols
 
-    def create_matrix_data(self):
+    def create_all_stocks_data(self):
         all_symbols = self.collect_downloaded_symbols()
         df = pd.DataFrame(columns=all_symbols)
         for s in all_symbols:
             df[s] = self.load_ticker(s)[1]['Close']
         print(df.head())
         df.dropna(inplace=True)
+
         return df
 
 
@@ -335,10 +336,12 @@ class Gemini:
         #     self.data, t1_data, t2_data = self.get_data(t1, t2)
         if t1 and t2:
             self.data, t1_data, t2_data = self.get_data(t1, t2)
+        self.all_stocks_data=self.create_all_stocks_data()
         self.linreg.update(self.data)
         self.price_relation.update(self.data)
         self.ratio_model.update(self.data)
         self.residual_model.update(self.data)
+        self.correlation_matrix.update(self.all_stocks_data)
 
 
 gemini=Gemini()

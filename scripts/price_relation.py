@@ -43,8 +43,6 @@ class Price_relation:
 
     def update(self, data):
         print("Price relation updating...")
-        print(data.head())
         self.source.data = self.source.from_df(data[['t1', 't2', 't1_normal', 't2_normal', 'residual_ols','residual_tls', 'Time', 'Colors', 'Ticker']])
         self.p.title.text = 'Normalised prices: ' + data.keys()[0] + " and " + data.keys()[2]
         self.r1.title.text = 'OLS and TLS Residuals of ' + data.keys()[0] + " and " + data.keys()[2]
-        self.p.legend[0].plot.legend[0].plot.legend[0]._property_values['items'][0].label['value'] = 'Marc'

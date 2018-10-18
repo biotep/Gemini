@@ -25,9 +25,9 @@ class Linreg:
         self.smols_summary=str(self.smols.summary(yname=self.t2, xname=['Intercept','Gradient'],  title=str("Ordinary least squares of " + self.t2 + " on " + self.t1)))
         self.tls_summary = "\n Total least squares: \n" + "slope: " + str(self.tls_out.beta[0]) + " intercept: " + str(self.tls_out.beta[1])
 
-        self.tools = 'pan,wheel_zoom,xbox_select,reset'
+        self.tools = 'reset'
 
-        self.p = figure(plot_width=450, plot_height=450, tools='pan,wheel_zoom,box_select,reset')
+        self.p = figure(plot_width=450, plot_height=450, tools='reset')
         self.p.scatter(x='t1', y='t2', marker='asterisk', size=5, color='Colors', alpha=0.6,  source=self.source)
         self.p.circle('t1', 't2', size=2, source=self.source, selection_color="orange", alpha=0.2,  selection_alpha=0.2)
 
@@ -38,7 +38,7 @@ class Linreg:
         self.p.add_layout(self.slope_tls)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
-        self.stats = PreText(text='', width=650)
+        self.stats = PreText(text='', width=750)
 
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
         self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
@@ -130,9 +130,6 @@ class Linreg:
         else:
             self.filedatetext3 = " OK"
 
-
-        #self.stats.text = self.smols_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
-        #self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\ncorrelation : " + str(corrcoeff)
         self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
 
         self.p.xaxis.axis_label = self.t1

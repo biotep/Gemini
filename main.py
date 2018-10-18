@@ -337,10 +337,12 @@ class Gemini:
         if t1 and t2:
             self.data, t1_data, t2_data = self.get_data(t1, t2)
         self.all_stocks_data=self.create_all_stocks_data()
+        self.residual_model.update(self.data)
         self.linreg.update(self.data)
         self.price_relation.update(self.data)
+        print("PAUSEEE")
         self.ratio_model.update(self.data)
-        self.residual_model.update(self.data)
+
         self.correlation_matrix.update(self.all_stocks_data)
 
 

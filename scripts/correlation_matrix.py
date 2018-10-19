@@ -41,7 +41,7 @@ class Correlation_matrix:
             y="B",
             text=str("value"),
             source=ColumnDataSource(self.matrix_data),
-            text_color=mapper2,
+            text_color='black',
             text_align="left")
 
         color_bar = ColorBar(

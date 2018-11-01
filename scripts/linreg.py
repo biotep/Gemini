@@ -3,6 +3,7 @@ from bokeh.models import ColumnDataSource, Panel, Slope, PreText, Paragraph, Div
 from bokeh.layouts import column, row
 import numpy as np
 import statsmodels.formula.api as sm
+from statsmodels.tsa.stattools import coint
 from scipy.odr import *
 
 class Linreg:
@@ -38,6 +39,9 @@ class Linreg:
         self.p.add_layout(self.slope_tls)
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2
+
+        score, pvalue, _ = coint(data.t1, data.t2)
+        self.cointext = "coint: " + str(pvalue)
         self.stats = PreText(text='', width=750)
 
         corrcoeff = np.corrcoef(data.t1, data.t2)[0][1]
@@ -50,7 +54,7 @@ class Linreg:
 
 
         #self.stats.text = str(data[[self.t1, self.t2, self.t1 + '_normal', self.t2 + '_normal']].describe()) + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
-        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff) + "\n" + self.cointext
         self.p.grid.grid_line_color = None
         self.p.background_fill_color = "#eedddd"
 
@@ -116,11 +120,14 @@ class Linreg:
 
         self.smols = sm.ols(formula="t2 ~ t1", data=data[['t1', 't2']]).fit()
         self.tls_out = self.tls(data.t1, data.t2)
-
+        #for cointegration
+        score, pvalue, _ = coint(data.t1, data.t2)
+        self.cointext = "coint: " + str(pvalue)
+        print("self.cointext", self.cointext)
 
         self.smols_summary=str(self.smols.summary(yname=self.t2, xname=['Intercept','Gradient'], title=str("Ordinary least squares of " + self.t2 + " on " + self.t1)))
         self.tls_summary = "\n Total least squares: \n" + "slope: " + str(self.tls_out.beta[0]) + " intercept: " + str(self.tls_out.beta[1])
-        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff) + "\n" + self.cointext
 
 
         self.filedatetext1 = data.t1.index[:1][0].__str__().split()[0]
@@ -130,7 +137,7 @@ class Linreg:
         else:
             self.filedatetext3 = " OK"
 
-        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff)
+        self.stats.text = self.smols_summary + "\n" + self.tls_summary + "\nEOF    " + self.filedatetext1 +"   " + self.filedatetext2 + self.filedatetext3 + "\ncorrelation : " + str(corrcoeff) + "\n" + self.cointext
 
         self.p.xaxis.axis_label = self.t1
         self.p.yaxis.axis_label = self.t2

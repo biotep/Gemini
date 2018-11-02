@@ -187,14 +187,22 @@ class Gemini:
 
         def onError(reqId, errorCode, errorString, contract):
             print("ERROR", reqId, errorCode, errorString)
+            if "ambiguous" in errorString:
+                self.tickerdownloadbutton.button_type = 'danger'
+                self.tickerdownloadbutton.label = 'ambigous symbol'
+                time.sleep(2)
+                self.tickerdownloadbutton.button_type = 'default'
+                self.tickerdownloadbutton.label = 'press to download'
+                ib.disconnect()
 
         ib = IB()
         ib.errorEvent += onError
+        ib.setCallback('error', onError)
         util.patchAsyncio()
 
         print('not connected...trying to connect')
         if not ib.isConnected():
-            ib.connect(ib_server, ib_port, clientId=14)
+            ib.connect(ib_server, ib_port, clientId=25)
 
         contract1 = Stock(symbol_to_download, venue, ccy)
         try:
@@ -202,7 +210,7 @@ class Gemini:
             req = ib.reqHistoricalDataAsync(contract1, endDateTime='', durationStr=duration,
                                      barSizeSetting=barSizeSetting, whatToShow='TRADES', useRTH=True)
             bars1=ib.run(asyncio.wait_for(req, timeout))
-        except asyncio.TimeoutError:
+        except (asyncio.TimeoutError):
             print("TimeOuterror caught")
             ib.disconnect()
             return pd.DataFrame()
@@ -306,8 +314,6 @@ class Gemini:
         residual_ols = self.data[t2] - (gradient * self.data[t1] + intercept)
         residual_tls = self.tls_calc(self.data[t1], self.data[t2])
 
-
-
         self.data['t1'] = self.data[t1]
         self.data['t2'] = self.data[t2]
         self.data['t1_normal'] = self.data[t1 + '_normal']
@@ -319,10 +325,11 @@ class Gemini:
         crange = self.data['Time'].max() - self.data['Time'].min()
         cols = (self.data['Time'] - cmin) * 255 // crange
         self.data['Colors'] = np.array(bk_pal.Plasma256)[cols.astype(int).tolist()]
-        nrows = int((self.data['t1'].count()) / 2)
-        tickers = pd.DataFrame(np.tile([t1,t2], nrows), index=self.data.index, columns=['Ticker'])
+        nrows = (int((self.data['t1'].count()) / 2))+1
+        ticker_tile = np.tile([t1, t2], nrows)
+        ticker_tile = ticker_tile[:self.data.index.__len__()]
+        tickers = pd.DataFrame(ticker_tile, index=self.data.index, columns=['Ticker'])
         self.data = pd.concat([self.data, tickers], axis=1)
-        print(self.data.head())
         return self.data, t1_data, t2_data
 
     def update(self, selected=None):

@@ -126,6 +126,7 @@ class Gemini:
         curdoc().title = "Stocks"
 
     def ticker1_change(self,attrname, old, new):
+        print("ticker1_changed")
         self.tickerInfo1.text = '<b>' + self.catalog.loc[self.catalog.STOCK.isin([new])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0] + '</b>'
         self.tickerInfo2.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         self.tickerInfo3.text = 'Market cap: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
@@ -134,6 +135,7 @@ class Gemini:
         self.update()
 
     def ticker2_change(self, attrname, old, new):
+        print("ticker2_changed")
         self.tickerInfo5.text = '<b>' + self.catalog.loc[self.catalog.STOCK.isin([new])][['COMPANY']].to_string(header=False, index=False, index_names=False).split('\n')[0] + '</b>'
         self.tickerInfo6.text = self.catalog.loc[self.catalog.STOCK.isin([new])][['INDUSTRY']].to_string(header=False, index=False, index_names=False).split('\n')[0]
         self.tickerInfo7.text = 'Market cap: ' + self.catalog.loc[self.catalog.STOCK.isin([new])][['MARKETCAP']].to_string(header=False, index=False, index_names=False).split('\n')[0]
@@ -147,6 +149,8 @@ class Gemini:
         self.history_dir=history_dir+self.TIMEFRAME+'/'
         self.ticker1.value=self.DEFAULT_TICKERS[0]
         self.ticker2.value=self.DEFAULT_TICKERS[1]
+        self.ticker1_change("value", None, self.ticker1.value)
+        self.ticker2_change("value", None, self.ticker2.value)
         self.update()
 
     def tickerdownloadbutton_handler(self):
@@ -187,6 +191,15 @@ class Gemini:
 
         def onError(reqId, errorCode, errorString, contract):
             print("ERROR", reqId, errorCode, errorString)
+            if "fundamentals" in errorString:
+                self.tickerdownloadbutton.button_type = 'danger'
+                self.tickerdownloadbutton.label = 'funda data unavail'
+                time.sleep(2)
+                self.tickerdownloadbutton.button_type = 'default'
+                self.tickerdownloadbutton.label = 'press to download'
+                time.sleep(1)
+                ib.disconnect()
+                return
             if "ambiguous" in errorString:
                 self.tickerdownloadbutton.button_type = 'danger'
                 self.tickerdownloadbutton.label = 'ambigous symbol'
@@ -194,10 +207,19 @@ class Gemini:
                 self.tickerdownloadbutton.button_type = 'default'
                 self.tickerdownloadbutton.label = 'press to download'
                 ib.disconnect()
+                return
+            elif not any(ext in errorString for ext in ['HMDS', 'OK', 'ushmds']):
+                self.tickerdownloadbutton.button_type = 'danger'
+                self.tickerdownloadbutton.label = 'general error'
+                time.sleep(2)
+                self.tickerdownloadbutton.button_type = 'default'
+                self.tickerdownloadbutton.label = 'press to download'
+                ib.disconnect()
+
 
         ib = IB()
         ib.errorEvent += onError
-        ib.setCallback('error', onError)
+        #ib.setCallback('error', onError)
         util.patchAsyncio()
 
         print('not connected...trying to connect')
@@ -216,7 +238,12 @@ class Gemini:
             return pd.DataFrame()
 
         if contract1.symbol not in self.catalog.STOCK:
-            fundamentals = ib.reqFundamentalData(contract1, 'ReportSnapshot')
+            try:
+                print("trying to get FUNDA")
+                fundamentals = ib.reqFundamentalData(contract1, 'ReportSnapshot')
+            except:
+                print("Some error happened when attemping to get fundamental data")
+                return
             soup = BeautifulSoup(fundamentals, 'xml')
             CompanyName = soup.find('CoID', Type='CompanyName').contents[0]
             Industry = soup.find('Industry').contents[0]
@@ -246,7 +273,6 @@ class Gemini:
                           usecols=[1, 2, 3, 4, 5, 6], parse_dates=True)
 
         time.sleep(1)
-        #get the fundamental data:
 
         return df0
 
@@ -269,7 +295,6 @@ class Gemini:
         df.dropna(inplace=True)
 
         return df
-
 
 
     def load_ticker(self, ticker):

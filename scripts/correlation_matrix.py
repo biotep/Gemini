@@ -7,14 +7,19 @@ from bokeh.io import output_file, show
 from bokeh.models import BasicTicker, ColorBar, LinearColorMapper, ColumnDataSource, PrintfTickFormatter
 from bokeh.plotting import figure
 from bokeh.transform import transform
+from bokeh.io import output_file, show
+from bokeh.layouts import widgetbox
+from bokeh.models.widgets import CheckboxGroup
+
 class Correlation_matrix:
     def __init__(self, corr_data):
-
 
         self.matrix_data = pd.DataFrame(np.round(np.corrcoef(corr_data, rowvar=0),2), columns=corr_data.columns, index=corr_data.columns.values)
 
         self.matrix_data.columns.name = 'B'
         self.matrix_data.index.name = 'A'
+
+        print(self.matrix_data)
 
         self.matrix_data = self.matrix_data.stack().rename("value").reset_index()
         #self.matrix_data.to_pickle("/Users/Uriel/Documents/Python/Ibis/Gemini/matrix_data.pkl")
@@ -23,7 +28,6 @@ class Correlation_matrix:
         colors = ['#a50026','#d73027','#f46d43','#fdae61','#fee08b','#d9ef8b','#a6d96a','#66bd63','#1a9850','#006837']
         mapper = LinearColorMapper(palette=colors, low=-1, high=1)
         colors2 = colors[::-1]
-        mapper2 = LinearColorMapper(palette=colors2, low=-1, high=1)
 
         self.p = figure(plot_width=600, plot_height=600, title="My plot", x_range=list(self.matrix_data.A.drop_duplicates()),y_range=list(self.matrix_data.B.drop_duplicates())[::-1], toolbar_location=None, tools="hover", tooltips=[('coef:', '@value')], x_axis_location="above")
 
@@ -51,8 +55,20 @@ class Correlation_matrix:
             location=(0, 0),
             ticker=BasicTicker(desired_num_ticks=len(colors)))
 
+        def checkbox_group_callback(attr, old, new):
+            print(corr_data.columns[new])
+
+        self.checkbox_group = CheckboxGroup(
+            labels=list(corr_data.columns), active=[0, 1])
+
+        #show(widgetbox(checkbox_group))
+        self.checkbox_group.on_change('active', checkbox_group_callback)
+
         self.p.add_layout(color_bar, 'right')
 
-        layout = row(self.p)
+        layout = row(self.p, widgetbox(self.checkbox_group))
 
-        self.tab = Panel(child=layout, title='Matrix Regression')
+        self.tab = Panel(child=layout, title='Correlation Matrix')
+
+    def update(self, data):
+        pass

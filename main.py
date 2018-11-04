@@ -23,7 +23,6 @@ from scripts.residual_model import Residual_model
 from scripts.correlation_matrix import Correlation_matrix
 
 
-
 from pathlib import Path
 home = str(Path.home())
 

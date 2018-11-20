@@ -1,5 +1,6 @@
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, Panel, Slider, RangeSlider, Span
+from bokeh.models import HoverTool
 from bokeh.layouts import column, row
 import pandas as pd
 import numpy as np
@@ -12,7 +13,7 @@ class Residual_model:
         self.LRperiod = 20
         self.EntryT = 2.5
         self.ExitT = 0.0
-        self.tools = 'reset'
+        self.tools = ['reset', 'hover', 'zoom_in', 'zoom_out', 'pan']
         self.t1 = self.data.keys()[0]
         self.t2 = self.data.keys()[2]
 
@@ -35,11 +36,14 @@ class Residual_model:
         self.p1.line('date', 'Ux', source=self.source, line_width=1, color='brown', alpha=0.8)
         self.p1.line('date', 'Lx', source=self.source, line_width=1, color='pink', alpha=0.8)
 
-
+        self.hover = self.p1.select(dict(type=HoverTool))
+        self.hover.tooltips = [('date',   '@date{%F}'), ('zscore', '@resids')]
+        self.hover.formatters = {'date' : 'datetime'}
 
 
         self.p1.legend.location = "bottom_left"
         self.p1.title.text = 'Residual of prices: ' + self.t1 + ' and ' + self.t2
+
 
 
         self.LR_slider = Slider(start=10, end=80, value=25, step=1, title='Experimental! Regresson Period', callback_policy = "mouseup", callback_throttle=1000)

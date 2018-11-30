@@ -1,3 +1,23 @@
-this is a readme
-adding more here
-# test line
+This should be run as a web service, cd in to the same directory where main.py and execute:
+
+bokeh serve .
+
+It might not run immiediately for you. It need some historical market data downloaded or an Interactive Broker TWS running on the node as well.
+In addition to that, there are config settings which need to be setup first to be able to run this application:
+
+cat config.ini 
+
+[History directory]
+history_dir = /Users/Uriel/Documents/Python/Ibis/historical/
+
+[Test Dir]
+test_dir = /Users/ + Username
+
+[Server]
+server_document = "http://localhost:5006/Bokeh_Gemini"
+
+[IB]
+IB_Server = 162.243.65.96
+
+
+However, you can browse and check my codes in the scripts directory.

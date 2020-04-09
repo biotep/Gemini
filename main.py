@@ -241,6 +241,8 @@ class Gemini:
                 print("trying to get FUNDA")
                 fundamentals = ib.reqFundamentalData(contract1, 'ReportSnapshot')
             except:
+                #2018-11-21 01:04:30,468 Error 430, reqId 4: We are sorry, but fundamentals data for the security specified is not available.failed to fetch, contract: Stock(symbol='PSCT', exchange='SMART', currency='USD')
+                #ERROR 4 430 We are sorry, but fundamentals data for the security specified is not available.failed to fetch
                 print("Some error happened when attemping to get fundamental data")
                 return
             soup = BeautifulSoup(fundamentals, 'xml')
@@ -289,6 +291,7 @@ class Gemini:
         all_symbols = self.collect_downloaded_symbols()
         df = pd.DataFrame(columns=all_symbols)
         for s in all_symbols:
+            print("s: ", s)
             df[s] = self.load_ticker(s)[1]['Close']
         print(df.head())
         df.dropna(inplace=True)

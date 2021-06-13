@@ -17,7 +17,7 @@ test_dir = /Users/ + Username
 server_document = "http://localhost:5006/Bokeh_Gemini"
 
 [IB]
-IB_Server = 162.243.65.96
+IB_Server = 132.123.65.33
 
 
 However, you can browse and check my codes in the scripts directory.

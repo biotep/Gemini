@@ -1,8 +1,8 @@
-This should be run as a web service, cd in to the same directory where main.py and execute:
+This run as a web service, cd in to the same directory where main.py and execute:
 
 bokeh serve .
 
-It might not run immiediately for you. It need some historical market data downloaded or an Interactive Broker TWS running on the node as well.
+It won't run immiediately for you. It need some historical market data downloaded or an Interactive Broker TWS running on the node as well.
 In addition to that, there are config settings which need to be setup first to be able to run this application:
 
 cat config.ini 

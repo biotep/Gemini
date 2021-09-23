@@ -1,12 +1,4 @@
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -15,8 +7,6 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
-
-<!-- PROJECT LOGO -->
 <br />
 <p align="center">
 
@@ -26,7 +16,7 @@
     A handy tool to show stock pair properties in regarding correlation & cointegration
     <br />
   </p>
-</p>
+
 
 
 
@@ -61,14 +51,26 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Gemini UI](./Docs/Gemini_UI_1.png)
+<img src="https://user-images.githubusercontent.com/6575510/134542544-282b295a-6d19-4734-8d95-55c43ece7dad.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542571-1cc17c8e-8725-4771-951a-10a769bb3e0c.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542573-f0837252-fe48-45dc-8373-1997a8854e24.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542576-72dbc8bb-7b43-42ba-81ff-d82ab6532d1c.png" width="90%"></img> 
 
+I've put this utility together to help finding pair trade candidates, and to optimize model parameters.
 
-This run as a web service, cd in to the same directory where main.py and execute:
+Features:
+
+* Run linear regression on stock pairs with correlation and display cointegration statistical properties
+* Display historical stock pair relationship 
+* Quick & dirty backtesting for ratio and residual model trading strategies 
+* Correlation matrix for a universe of stocks - work in progress
+
+With the current setup, the program download hourly and daily OHLC stock data from Interactive Broker API. 
+Other data provider can be used, eg.: yahoo finance.  
+
+The technology used here is Bokeh. Run the application as a web service, change to the project root directory
+and execute the following command:
 
 bokeh serve .
 
-It won't run immiediately for you. It need some historical market data downloaded or an Interactive Broker TWS running on the node as well.
+In the current setup the program looking for the  there are existing historical market data downloaded or an Interactive Broker TWS running on the node as well.
 In addition to that, there are config settings which need to be setup first to be able to run this application:
 
 cat config.ini 

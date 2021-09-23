@@ -51,8 +51,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="https://user-images.githubusercontent.com/6575510/134542544-282b295a-6d19-4734-8d95-55c43ece7dad.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542571-1cc17c8e-8725-4771-951a-10a769bb3e0c.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542573-f0837252-fe48-45dc-8373-1997a8854e24.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542576-72dbc8bb-7b43-42ba-81ff-d82ab6532d1c.png" width="90%"></img> 
-
 I've put this utility together to help finding pair trade candidates, and to optimize model parameters.
 
 Features:
@@ -63,135 +61,49 @@ Features:
 * Correlation matrix for a universe of stocks - work in progress
 
 With the current setup, the program download hourly and daily OHLC stock data from Interactive Broker API. 
-Other data provider can be used, eg.: yahoo finance.  
+Other data provider can be used, eg.: yahoo finance.
+
+First step is to modify config.ini to match your setup: add IB API IP address and the path for your historical data directory
 
 The technology used here is Bokeh. Run the application as a web service, change to the project root directory
 and execute the following command:
 
 bokeh serve .
 
-In the current setup the program looking for the  there are existing historical market data downloaded or an Interactive Broker TWS running on the node as well.
-In addition to that, there are config settings which need to be setup first to be able to run this application:
-
-cat config.ini 
-
-[History directory]
-history_dir = /Users/Uriel/Documents/Python/Ibis/historical/
-
-[Test Dir]
-test_dir = /Users/ + Username
-
-[Server]
-server_document = "http://localhost:5006/Bokeh_Gemini"
-
-[IB]
-IB_Server = 132.123.65.33
-
-
-However, you can browse and check my codes in the scripts directory.
+App starts and the UI is available on "http://localhost:5006/Bokeh_Gemini"
 
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
+Using the application with ineractive brokers requires ib_insync library
+* [IB](https://interactivebrokers.com)
+* [Bokeh](https://https://bokeh.org/)
+* [ib_insync](https://ib-insync.readthedocs.io/api.html)
 
+
+
+<img src="https://user-images.githubusercontent.com/6575510/134542544-282b295a-6d19-4734-8d95-55c43ece7dad.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542571-1cc17c8e-8725-4771-951a-10a769bb3e0c.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542573-f0837252-fe48-45dc-8373-1997a8854e24.png" width="90%"></img> <img src="https://user-images.githubusercontent.com/6575510/134542576-72dbc8bb-7b43-42ba-81ff-d82ab6532d1c.png" width="90%"></img> 
 
 
 <!-- GETTING STARTED -->
-## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
-
-### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```JS
-   const API_KEY = 'ENTER YOUR API';
-   ```
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-
 
 <!-- ROADMAP -->
 ## Roadmap
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
 
 
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
 
 
 <!-- CONTACT -->
 ## Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
 
 
 

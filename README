@@ -2,7 +2,7 @@ This run as a web service, cd in to the same directory where main.py and execute
 
 bokeh serve .
 
-![Gemini UI](https://github.com/biotep/Gemini/blob/master/Docs/gemini_main.png)
+![Gemini UI](./Docs/gemini_main.png)
 
 
 It won't run immiediately for you. It need some historical market data downloaded or an Interactive Broker TWS running on the node as well.

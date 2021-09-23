@@ -23,19 +23,11 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">Gemini Pair Trade Analyzer</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    A handy tool to show stock pair properties in regarding correlation & cointegration
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
   </p>
 </p>
 
@@ -73,6 +65,7 @@
 ## About The Project
 
 <img src="https://user-images.githubusercontent.com/6575510/134530221-2f991099-4639-41c8-9adc-14c6f1a5206d.png" width="90%"></img> 
+
 
 This run as a web service, cd in to the same directory where main.py and execute:
 

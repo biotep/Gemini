@@ -61,7 +61,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Gemini UI](./Docs/Gemini_UI.png)
+![Gemini UI](./Docs/Gemini_UI_1.png)
 
 
 This run as a web service, cd in to the same directory where main.py and execute:

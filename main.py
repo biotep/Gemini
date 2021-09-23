@@ -28,7 +28,8 @@ home = str(Path.home())
 
 username = getpass.getuser()
 config = configparser.ConfigParser()
-configFile = home + '/Documents/Python/Ibis/config.ini'
+#configFile = home + '/Documents/Python/Ibis/Gemini/config.ini'
+configFile = './config.ini'
 
 config.read(configFile)
 history_dir = config['History directory']['history_dir']
@@ -52,7 +53,7 @@ class Gemini:
         self.DEFAULT_TICKERS = self.collect_downloaded_symbols()
         self.view_setup()
 
-    def tickerInfoTextSetup(self):
+    def tickerInfoTextSetup(self)::
         ticker1 = self.ticker1.value
         ticker2 = self.ticker2.value
 
@@ -302,7 +303,7 @@ class Gemini:
     def load_ticker(self, ticker):
         print("loading ", ticker)
         df = pd.read_csv(self.history_dir + ticker + '.csv', index_col='date', usecols=[1, 2, 3, 4, 5, 6], parse_dates=True)
-        df.index = pd.to_datetime(df.index, format=('%Y-%m-%d %H:%M:%S'), box=True)
+        df.index = pd.to_datetime(df.index, format=('%Y-%m-%d %H:%M:%S'))
         df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
 
         def normalize(data):

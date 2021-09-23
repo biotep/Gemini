@@ -19,9 +19,6 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
 
   <h3 align="center">Gemini Pair Trade Analyzer</h3>
 
@@ -64,7 +61,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="https://user-images.githubusercontent.com/6575510/134530221-2f991099-4639-41c8-9adc-14c6f1a5206d.png" width="90%"></img> 
+![Gemini UI](./Docs/Gemini_UI.png)
 
 
 This run as a web service, cd in to the same directory where main.py and execute:

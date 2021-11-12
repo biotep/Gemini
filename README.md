@@ -63,7 +63,7 @@ Features:
 With the current setup, the program download hourly and daily OHLC stock data from Interactive Broker API. 
 Other data provider can be used, eg.: yahoo finance.
 
-First step is to modify config.ini to match your setup: add IB API IP address and the path for your historical data directory
+First step is to modify config.ini so it can match your setup: add IB API IP address and the path for your historical data directory
 
 The technology used here is Bokeh. Run the application as a web service, change to the project root directory
 and execute the following command:
